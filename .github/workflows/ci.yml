@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ai_workspace
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ai_workspace"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma validate
+        working-directory: apps/server
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ai_workspace
+      - run: npx prisma generate
+        working-directory: apps/server
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ai_workspace
+      - run: npm run build
+        working-directory: apps/server
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ai_workspace
+          JWT_SECRET: ci-secret
+          PORT: 5000
+      - run: npm run lint
+        working-directory: apps/client
+      - run: npm run build
+        working-directory: apps/client

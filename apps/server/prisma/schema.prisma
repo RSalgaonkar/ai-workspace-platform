@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String               @id @default(cuid())
+  name          String
+  email         String               @unique
+  password      String
+  role          String               @default("USER")
+  refreshToken  String?
+
+  ownedWorkspaces Workspace[]          @relation("WorkspaceOwner")
+  workspaces       WorkspaceMember[]
+  messages      Message[]
+  reactions     MessageReaction[]
+  uploadedFiles FileAsset[]          @relation("UploadedFiles")
+  documentRevisions DocumentRevision[]
+  activities    Activity[]
+  notifications Notification[]
+
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+}
+
+model Workspace {
+  id          String               @id @default(cuid())
+
+  name        String
+  slug        String               @unique
+  description String?
+
+  ownerId     String
+  owner       User                 @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+
+  members     WorkspaceMember[]
+  channels    Channel[]
+  invites     Invite[]
+  files       FileAsset[]
+  documents   CollaborativeDocument[]
+  activities  Activity[]
+
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+}
+
+model WorkspaceMember {
+  id          String      @id @default(cuid())
+
+  userId      String
+  workspaceId String
+
+  role        WorkspaceRole @default(MEMBER)
+
+  user        User        @relation(fields: [userId], references: [id])
+
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id])
+
+  createdAt   DateTime    @default(now())
+
+  @@unique([userId, workspaceId])
+}
+
+model Channel {
+  id          String      @id @default(cuid())
+
+  name        String
+
+  workspaceId String
+
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id])
+
+  messages    Message[]
+
+  createdAt   DateTime    @default(now())
+}
+
+model Message {
+  id          String      @id @default(cuid())
+
+  content     String
+
+  channelId   String
+  userId      String
+  parentId    String?
+
+  channel     Channel     @relation(fields: [channelId], references: [id])
+
+  user        User        @relation(fields: [userId], references: [id])
+  parent      Message?    @relation("MessageThread", fields: [parentId], references: [id])
+  replies     Message[]   @relation("MessageThread")
+  attachments MessageAttachment[]
+  reactions   MessageReaction[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
+}
+
+model FileAsset {
+  id          String      @id @default(cuid())
+  fileName    String
+  mimeType    String
+  size        Int
+  url         String
+  storageKey  String
+
+  workspaceId String?
+  uploaderId  String
+
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+  uploader    User       @relation("UploadedFiles", fields: [uploaderId], references: [id])
+  messages    MessageAttachment[]
+
+  createdAt   DateTime   @default(now())
+}
+
+model MessageAttachment {
+  id          String    @id @default(cuid())
+  messageId   String
+  fileId      String
+
+  message     Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  file        FileAsset @relation(fields: [fileId], references: [id])
+
+  createdAt   DateTime  @default(now())
+
+  @@unique([messageId, fileId])
+}
+
+model MessageReaction {
+  id          String    @id @default(cuid())
+  emoji       String
+  messageId   String
+  userId      String
+
+  message     Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime  @default(now())
+
+  @@unique([messageId, userId, emoji])
+}
+
+model CollaborativeDocument {
+  id          String      @id @default(cuid())
+  title       String
+  content     String      @default("")
+  workspaceId String
+
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id])
+  revisions   DocumentRevision[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model DocumentRevision {
+  id          String      @id @default(cuid())
+  documentId  String
+  authorId    String
+  content     String
+  version     Int
+
+  document    CollaborativeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  author      User                  @relation(fields: [authorId], references: [id])
+
+  createdAt   DateTime    @default(now())
+
+  @@unique([documentId, version])
+}
+
+model Activity {
+  id          String       @id @default(cuid())
+  type        ActivityType
+  title       String
+  metadata    Json?
+
+  workspaceId String?
+  actorId     String?
+
+  workspace   Workspace?   @relation(fields: [workspaceId], references: [id])
+  actor       User?        @relation(fields: [actorId], references: [id])
+
+  createdAt   DateTime     @default(now())
+}
+
+model Invite {
+  id          String      @id @default(cuid())
+
+  email       String
+
+  token       String      @unique
+
+  workspaceId String
+
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id])
+
+  expiresAt   DateTime
+
+  createdAt   DateTime    @default(now())
+}
+
+model Notification {
+  id          String      @id @default(cuid())
+
+  title       String
+
+  content     String
+
+  read        Boolean     @default(false)
+
+  userId      String
+
+  user        User        @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime    @default(now())
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum ActivityType {
+  MESSAGE_CREATED
+  FILE_UPLOADED
+  REACTION_ADDED
+  DOCUMENT_UPDATED
+  WORKSPACE_UPDATED
+  AI_ASSISTANT_USED
+}

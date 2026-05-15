@@ -1,0 +1,8 @@
+node_modules
+.env
+.next
+dist
+coverage
+.prisma
+turbo
+.DS_Store
