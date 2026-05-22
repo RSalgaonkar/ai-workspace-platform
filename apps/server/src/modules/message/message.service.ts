@@ -4,6 +4,10 @@ import {
   recordActivity
 } from "../activity/activity.service";
 
+import {
+  indexEntity
+} from "../search/indexer.service";
+
 const findChannel =
   async (channelIdOrName: string) => {
     return prisma.channel.findFirst({
@@ -80,6 +84,19 @@ export const createMessage =
         channelId: channel.id,
         attachmentCount:
           attachmentIds.length
+      }
+    });
+
+    await indexEntity({
+      workspaceId:
+        channel.workspaceId,
+      entityType: "MESSAGE",
+      entityId: message.id,
+      title: `Message in #${channel.name}`,
+      body: message.content,
+      metadata: {
+        channelId: channel.id,
+        userId
       }
     });
 

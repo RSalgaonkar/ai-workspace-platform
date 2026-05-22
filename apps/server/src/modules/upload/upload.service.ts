@@ -11,6 +11,10 @@ import {
   recordActivity
 } from "../activity/activity.service";
 
+import {
+  indexEntity
+} from "../search/indexer.service";
+
 const uploadRoot = path.join(
   process.cwd(),
   "uploads"
@@ -78,6 +82,20 @@ export const saveUploadedFile = async (data: {
       size: buffer.length
     }
   });
+
+  if (data.workspaceId) {
+    await indexEntity({
+      workspaceId: data.workspaceId,
+      entityType: "FILE",
+      entityId: file.id,
+      title: file.fileName,
+      body: `${file.fileName} ${file.mimeType}`,
+      metadata: {
+        size: file.size,
+        url: file.url
+      }
+    });
+  }
 
   return file;
 };

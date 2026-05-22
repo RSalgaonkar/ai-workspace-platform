@@ -22,6 +22,8 @@ model User {
   uploadedFiles FileAsset[]          @relation("UploadedFiles")
   documentRevisions DocumentRevision[]
   activities    Activity[]
+  notificationPreferences NotificationPreference[]
+  notificationDeliveries NotificationDelivery[]
   notifications Notification[]
 
   createdAt     DateTime             @default(now())
@@ -47,6 +49,11 @@ model Workspace {
   files       FileAsset[]
   documents   CollaborativeDocument[]
   activities  Activity[]
+  customRoles CustomRole[]
+  channelPermissions ChannelPermission[]
+  notificationPreferences NotificationPreference[]
+  notificationDeliveries NotificationDelivery[]
+  searchIndex SearchIndex[]
 
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
@@ -60,10 +67,12 @@ model WorkspaceMember {
 
   role        WorkspaceRole @default(MEMBER)
   permissions Json?
+  customRoleId String?
 
   user        User        @relation(fields: [userId], references: [id])
 
   workspace   Workspace   @relation(fields: [workspaceId], references: [id])
+  customRole  CustomRole? @relation(fields: [customRoleId], references: [id])
 
   createdAt   DateTime    @default(now())
 
@@ -82,8 +91,40 @@ model Channel {
   workspace   Workspace   @relation(fields: [workspaceId], references: [id])
 
   messages    Message[]
+  permissions ChannelPermission[]
 
   createdAt   DateTime    @default(now())
+}
+
+model CustomRole {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  permissions Json
+  workspaceId String
+
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  members     WorkspaceMember[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([workspaceId, name])
+}
+
+model ChannelPermission {
+  id          String      @id @default(cuid())
+  channelId   String
+  workspaceId String
+  role        WorkspaceRole?
+  customRoleId String?
+  permissions Json
+
+  channel     Channel     @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Message {
@@ -195,6 +236,61 @@ model Activity {
   createdAt   DateTime     @default(now())
 }
 
+model NotificationPreference {
+  id          String      @id @default(cuid())
+  userId      String
+  workspaceId String?
+  emailEnabled Boolean   @default(true)
+  pushEnabled  Boolean   @default(false)
+  digestEnabled Boolean  @default(true)
+  digestFrequency DigestFrequency @default(DAILY)
+  mutedChannels Json?
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([userId, workspaceId])
+}
+
+model NotificationDelivery {
+  id          String      @id @default(cuid())
+  userId      String
+  workspaceId String?
+  channel     NotificationChannel
+  subject     String
+  body        String
+  status      NotificationStatus @default(PENDING)
+  metadata    Json?
+  sentAt      DateTime?
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime   @default(now())
+}
+
+model SearchIndex {
+  id          String      @id @default(cuid())
+  workspaceId String
+  entityType  SearchEntityType
+  entityId    String
+  title       String
+  body        String
+  keywords    String[]
+  embedding   Json?
+  metadata    Json?
+
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([workspaceId, entityType, entityId])
+}
+
 model Invite {
   id          String      @id @default(cuid())
 
@@ -249,4 +345,30 @@ enum InviteStatus {
   ACCEPTED
   REVOKED
   EXPIRED
+}
+
+enum DigestFrequency {
+  DAILY
+  WEEKLY
+}
+
+enum NotificationChannel {
+  EMAIL
+  PUSH
+  IN_APP
+  DIGEST
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
+enum SearchEntityType {
+  MESSAGE
+  DOCUMENT
+  FILE
+  WORKSPACE
 }

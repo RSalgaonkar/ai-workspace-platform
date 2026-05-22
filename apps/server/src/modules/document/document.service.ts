@@ -4,6 +4,10 @@ import {
   recordActivity
 } from "../activity/activity.service";
 
+import {
+  indexEntity
+} from "../search/indexer.service";
+
 export const createDocument = async (data: {
   workspaceId: string;
   title: string;
@@ -37,6 +41,14 @@ export const createDocument = async (data: {
     metadata: {
       documentId: document.id
     }
+  });
+
+  await indexEntity({
+    workspaceId: data.workspaceId,
+    entityType: "DOCUMENT",
+    entityId: document.id,
+    title: document.title,
+    body: document.content
   });
 
   return document;
@@ -107,6 +119,15 @@ export const updateDocument = async (data: {
       documentId: document.id,
       version
     }
+  });
+
+  await indexEntity({
+    workspaceId:
+      document.workspaceId,
+    entityType: "DOCUMENT",
+    entityId: document.id,
+    title: document.title,
+    body: document.content
   });
 
   return document;

@@ -15,6 +15,9 @@ import documentRoutes from "./modules/document/document.routes";
 import activityRoutes from "./modules/activity/activity.routes";
 import searchRoutes from "./modules/search/search.routes";
 import aiRoutes from "./modules/ai/ai.routes";
+import notificationRoutes from "./modules/notifications/notification.routes";
+import analyticsRoutes from "./modules/analytics/analytics.routes";
+import permissionRoutes from "./modules/permissions/permissions.routes";
 
 const app = express();
 
@@ -101,6 +104,21 @@ app.use(
 app.use(
   "/api/ai",
   aiRoutes
+);
+
+app.use(
+  "/api/notifications",
+  notificationRoutes
+);
+
+app.use(
+  "/api/analytics",
+  analyticsRoutes
+);
+
+app.use(
+  "/api/permissions",
+  permissionRoutes
 );
 
 export default app;

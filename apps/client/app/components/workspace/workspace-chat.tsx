@@ -13,7 +13,11 @@ import ActivityFeed from "@/components/collaboration/activity-feed";
 
 import AiAssistantPanel from "@/components/collaboration/ai-assistant-panel";
 
+import AnalyticsPanel from "@/components/collaboration/analytics-panel";
+
 import DocumentPanel from "@/components/collaboration/document-panel";
+
+import NotificationPreferencesPanel from "@/components/collaboration/notification-preferences-panel";
 
 import SearchPanel from "@/components/collaboration/search-panel";
 
@@ -104,6 +108,16 @@ export default function WorkspaceChat() {
           >
             <SearchPanel />
             <AiAssistantPanel
+              workspaceId={
+                activeWorkspaceId
+              }
+            />
+            <AnalyticsPanel
+              workspaceId={
+                activeWorkspaceId
+              }
+            />
+            <NotificationPreferencesPanel
               workspaceId={
                 activeWorkspaceId
               }

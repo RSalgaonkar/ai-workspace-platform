@@ -5,22 +5,16 @@ import {
 } from "../../middleware/auth.middleware";
 
 import {
-  awareness,
-  heartbeat,
-  list
-} from "./presence.controller";
+  workspaceAnalytics
+} from "./analytics.controller";
 
 const router = Router();
 
 router.use(authenticate);
 
-router.post("/heartbeat", heartbeat);
-
 router.get(
-  "/:workspaceId/awareness",
-  awareness
+  "/workspace/:workspaceId",
+  workspaceAnalytics
 );
-
-router.get("/:workspaceId", list);
 
 export default router;
