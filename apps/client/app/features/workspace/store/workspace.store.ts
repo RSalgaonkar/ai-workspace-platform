@@ -3,38 +3,67 @@ import { create } from "zustand";
 export type WorkspaceChannel = {
   id: string;
   name: string;
+  description?: string | null;
+  position?: number;
+};
+
+export type WorkspaceMember = {
+  id: string;
+  role: "OWNER" | "ADMIN" | "MEMBER";
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+};
+
+export type WorkspaceInvite = {
+  id: string;
+  email: string;
+  role: "OWNER" | "ADMIN" | "MEMBER";
+  status: string;
+  expiresAt: string;
+};
+
+export type WorkspaceSummary = {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  avatarUrl?: string | null;
+  avatarColor?: string;
+  settings?: Record<string, unknown> | null;
+  channels?: WorkspaceChannel[];
+  members?: WorkspaceMember[];
+  invites?: WorkspaceInvite[];
 };
 
 interface WorkspaceState {
+  workspaces: WorkspaceSummary[];
   activeWorkspaceId:
     | string
     | null;
-
-  activeWorkspaceName:
-    | string
+  activeWorkspace:
+    | WorkspaceSummary
     | null;
-
   activeChannelId:
     | string
     | null;
-
   activeChannelName:
     | string
     | null;
-
   channels: WorkspaceChannel[];
-
-  setWorkspace: (
-    workspace: {
-      id: string;
-      name: string;
-    }
+  members: WorkspaceMember[];
+  invites: WorkspaceInvite[];
+  setWorkspaces: (
+    workspaces: WorkspaceSummary[]
   ) => void;
-
+  setWorkspace: (
+    workspace: WorkspaceSummary
+  ) => void;
   setChannels: (
     channels: WorkspaceChannel[]
   ) => void;
-
   setChannel: (
     channel: WorkspaceChannel
   ) => void;
@@ -42,32 +71,53 @@ interface WorkspaceState {
 
 export const useWorkspaceStore =
   create<WorkspaceState>((set) => ({
+    workspaces: [],
     activeWorkspaceId: null,
-    activeWorkspaceName: null,
+    activeWorkspace: null,
     activeChannelId: null,
     activeChannelName: null,
     channels: [],
+    members: [],
+    invites: [],
 
-    setWorkspace: (
-      workspace
-    ) =>
+    setWorkspaces: (workspaces) =>
+      set({
+        workspaces
+      }),
+
+    setWorkspace: (workspace) => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "activeWorkspaceId",
+          workspace.id
+        );
+      }
+
+      const channels =
+        workspace.channels ?? [];
+
       set({
         activeWorkspaceId:
           workspace.id,
-        activeWorkspaceName:
-          workspace.name
-      }),
+        activeWorkspace: workspace,
+        channels,
+        members:
+          workspace.members ?? [],
+        invites:
+          workspace.invites ?? [],
+        activeChannelId:
+          channels[0]?.id ?? null,
+        activeChannelName:
+          channels[0]?.name ?? null
+      });
+    },
 
-    setChannels: (
-      channels
-    ) =>
+    setChannels: (channels) =>
       set({
         channels
       }),
 
-    setChannel: (
-      channel
-    ) =>
+    setChannel: (channel) =>
       set({
         activeChannelId:
           channel.id,
