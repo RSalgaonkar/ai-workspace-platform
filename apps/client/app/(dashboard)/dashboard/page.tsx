@@ -4,8 +4,15 @@ import {
   Activity,
   CheckCircle2,
   MessageSquare,
+  Rocket,
   Users
 } from "lucide-react";
+
+import Link from "next/link";
+
+import PortfolioShowcase from "@/components/dashboard/portfolio-showcase";
+
+import SystemHealthCard from "@/components/dashboard/system-health-card";
 
 import Card from "@/components/ui/card";
 
@@ -62,7 +69,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
 
@@ -94,6 +101,8 @@ export default function DashboardPage() {
             </Card>
           );
         })}
+
+        <SystemHealthCard />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
@@ -114,7 +123,9 @@ export default function DashboardPage() {
               "Authenticated dashboard access",
               "Workspace and channel bootstrap",
               "Message history and composer",
-              "Accessible navigation states"
+              "Accessible navigation states",
+              "Vercel deployment configuration",
+              "Command palette workflow"
             ].map((item) => (
               <div
                 key={item}
@@ -134,17 +145,39 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="bg-slate-950 text-white">
-          <p className="text-sm font-semibold uppercase tracking-wide text-slate-300">
-            Next action
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10">
+            <Rocket
+              size={18}
+              aria-hidden="true"
+            />
+          </div>
+          <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-slate-300">
+            Recruiter demo path
           </p>
           <h2 className="mt-3 text-2xl font-bold">
-            Start in Chat
+            Show the whole product in under two minutes
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-300">
-            Use the chat workspace to validate live team messaging and channel switching with real user accounts.
+            Start with workspace switching, create a channel, send a threaded message, run AI search, then open Settings to show profile and member management.
           </p>
+          <div className="mt-5 flex flex-col gap-2">
+            <Link
+              href="/workspace"
+              className="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              Open workspace
+            </Link>
+            <Link
+              href="/settings"
+              className="inline-flex items-center justify-center rounded-lg border border-white/15 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              Review settings
+            </Link>
+          </div>
         </Card>
       </div>
+
+      <PortfolioShowcase />
     </section>
   );
 }

@@ -2,6 +2,8 @@
 
 import { ReactNode } from "react";
 
+import CommandPalette from "./command-palette";
+
 import Sidebar from "./sidebar";
 
 type Props = {
@@ -14,6 +16,7 @@ export default function DashboardShell({
   return (
     <div className="flex min-h-screen bg-slate-100 text-slate-950">
       <Sidebar />
+      <CommandPalette />
 
       <main
         id="main-content"
