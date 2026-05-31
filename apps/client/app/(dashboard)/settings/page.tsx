@@ -1,3 +1,5 @@
+import ProfileSettingsTabs from "@/components/profile/profile-settings-tabs";
+
 import WorkspaceSettingsPanel from "@/components/workspace/workspace-settings-panel";
 
 export default function SettingsPage() {
@@ -14,6 +16,8 @@ export default function SettingsPage() {
           Manage workspace identity, invitations, members, permissions, tenant settings, and analytics.
         </p>
       </div>
+
+      <ProfileSettingsTabs />
 
       <WorkspaceSettingsPanel />
     </section>

@@ -43,6 +43,14 @@ export default function AnalyticsPanel({
   const [analytics, setAnalytics] =
     useState<Analytics | null>(null);
 
+  const chartSummary =
+    analytics?.activitySeries
+      .map(
+        (point) =>
+          `${point.date}: ${point.activity} activity events and ${point.ai} AI events`
+      )
+      .join("; ") ?? "";
+
   useEffect(() => {
     if (!workspaceId) return;
 
@@ -54,21 +62,31 @@ export default function AnalyticsPanel({
   }, [workspaceId]);
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4">
+    <section
+      className="rounded-lg border border-slate-200 bg-white p-4"
+      aria-labelledby="analytics-title"
+    >
       <div className="flex items-center gap-2">
         <BarChart3
           size={17}
           className="text-slate-500"
           aria-hidden="true"
         />
-        <h2 className="text-sm font-semibold text-slate-950">
+        <h2
+          id="analytics-title"
+          className="text-sm font-semibold text-slate-950"
+        >
           Analytics
         </h2>
       </div>
 
       {analytics ? (
         <>
-          <div className="mt-4 h-44">
+          <div
+            className="mt-4 h-44"
+            role="img"
+            aria-label={`Workspace activity chart. ${chartSummary}`}
+          >
             <ResponsiveContainer
               width="100%"
               height="100%"
@@ -109,7 +127,20 @@ export default function AnalyticsPanel({
             </ResponsiveContainer>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2">
+          <dl className="sr-only">
+            {analytics.activitySeries.map(
+              (point) => (
+                <div key={point.date}>
+                  <dt>{point.date}</dt>
+                  <dd>
+                    {point.activity} activity events, {point.ai} AI events
+                  </dd>
+                </div>
+              )
+            )}
+          </dl>
+
+          <dl className="mt-4 grid grid-cols-2 gap-2">
             {Object.entries(
               analytics.totals
             ).map(([key, value]) => (
@@ -117,15 +148,15 @@ export default function AnalyticsPanel({
                 key={key}
                 className="rounded-lg bg-slate-50 p-2"
               >
-                <p className="text-lg font-bold text-slate-950">
+                <dt className="text-lg font-bold text-slate-950">
                   {value}
-                </p>
-                <p className="text-xs capitalize text-slate-500">
+                </dt>
+                <dd className="text-xs capitalize text-slate-500">
                   {key}
-                </p>
+                </dd>
               </div>
             ))}
-          </div>
+          </dl>
 
           <ul className="mt-4 space-y-2">
             {analytics.insights.map(

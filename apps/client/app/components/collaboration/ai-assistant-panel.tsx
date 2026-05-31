@@ -37,19 +37,28 @@ export default function AiAssistantPanel({
   };
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-slate-950 p-4 text-white">
+    <section
+      className="rounded-lg border border-slate-200 bg-slate-950 p-4 text-white"
+      aria-labelledby="ai-assistant-title"
+    >
       <div className="flex items-center gap-2">
         <Bot
           size={17}
           className="text-slate-300"
           aria-hidden="true"
         />
-        <h2 className="text-sm font-semibold">
+        <h2
+          id="ai-assistant-title"
+          className="text-sm font-semibold"
+        >
           AI assistant
         </h2>
       </div>
 
-      <p className="mt-3 text-sm leading-6 text-slate-300">
+      <p
+        className="mt-3 text-sm leading-6 text-slate-300"
+        aria-live="polite"
+      >
         {answer}
       </p>
 

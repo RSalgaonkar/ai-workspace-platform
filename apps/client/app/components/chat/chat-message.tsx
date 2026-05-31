@@ -17,6 +17,12 @@ type Props = {
   onReply?: (message: Message) => void;
 };
 
+const reactionOptions = [
+  "\u{1F44D}",
+  "\u{1F525}",
+  "\u{2705}"
+];
+
 export default function ChatMessage({
   message,
   onReply
@@ -89,7 +95,7 @@ export default function ChatMessage({
         )}
 
       <div className="mt-3 flex flex-wrap items-center gap-2 pl-12">
-        {["👍", "🔥", "✅"].map(
+        {reactionOptions.map(
           (emoji) => (
             <button
               key={emoji}

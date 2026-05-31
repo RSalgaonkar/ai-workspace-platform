@@ -19,6 +19,14 @@ import {
 import {
   AuthRequest
 } from "../../middleware/auth.middleware";
+import {
+  refreshTokenCookieOptions
+} from "../../utils/cookie";
+
+const {
+  maxAge: _maxAge,
+  ...clearRefreshTokenCookieOptions
+} = refreshTokenCookieOptions;
 
 export const register = async (
   req: Request,
@@ -31,12 +39,11 @@ export const register = async (
 
     const result = await registerUser(validatedData);
 
-    res.cookie("refreshToken", result.refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie(
+      "refreshToken",
+      result.refreshToken,
+      refreshTokenCookieOptions
+    );
 
     res.status(201).json({
       success: true,
@@ -64,12 +71,11 @@ export const login = async (
 
     const result = await loginUser(validatedData);
 
-    res.cookie("refreshToken", result.refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie(
+      "refreshToken",
+      result.refreshToken,
+      refreshTokenCookieOptions
+    );
 
     res.status(200).json({
       success: true,
@@ -110,17 +116,7 @@ export const refresh = async (
     res.cookie(
       "refreshToken",
       result.refreshToken,
-      {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        maxAge:
-          7 *
-          24 *
-          60 *
-          60 *
-          1000
-      }
+      refreshTokenCookieOptions
     );
 
     res.status(200).json({
@@ -168,7 +164,10 @@ export const logout = async (
       req.user!.userId
     );
 
-    res.clearCookie("refreshToken");
+    res.clearCookie(
+      "refreshToken",
+      clearRefreshTokenCookieOptions
+    );
 
     res.status(200).json({
       success: true

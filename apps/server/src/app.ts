@@ -18,12 +18,26 @@ import aiRoutes from "./modules/ai/ai.routes";
 import notificationRoutes from "./modules/notifications/notification.routes";
 import analyticsRoutes from "./modules/analytics/analytics.routes";
 import permissionRoutes from "./modules/permissions/permissions.routes";
+import {
+  isAllowedOrigin
+} from "./config/cors";
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin(origin, callback) {
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(
+        new Error(
+          "Origin is not allowed by CORS"
+        )
+      );
+    },
     credentials: true
   })
 );

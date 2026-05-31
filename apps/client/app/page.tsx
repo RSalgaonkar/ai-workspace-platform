@@ -32,12 +32,22 @@ const features = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="min-h-screen bg-slate-950 text-white"
+    >
       <section className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-6">
-        <nav className="flex items-center justify-between">
+        <nav
+          className="flex items-center justify-between"
+          aria-label="Primary"
+        >
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-slate-950">
-              <Sparkles size={18} />
+              <Sparkles
+                size={18}
+                aria-hidden="true"
+              />
             </span>
             <span className="text-lg font-bold">
               AI Workspace
@@ -63,7 +73,10 @@ export default function Home() {
         <div className="grid flex-1 items-center gap-10 py-16 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <div className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">
-              <ShieldCheck size={16} />
+              <ShieldCheck
+                size={16}
+                aria-hidden="true"
+              />
               Multi-tenant portfolio-grade collaboration platform
             </div>
 
@@ -101,7 +114,10 @@ export default function Home() {
                     Product Team
                   </h2>
                 </div>
-                <Users className="text-slate-500" />
+                <Users
+                  className="text-slate-500"
+                  aria-hidden="true"
+                />
               </div>
 
               <div className="mt-5 grid grid-cols-3 gap-3">
@@ -132,7 +148,10 @@ export default function Home() {
                       key={feature.title}
                       className="flex gap-3 rounded-lg border border-slate-200 p-3"
                     >
-                      <Icon className="mt-0.5 text-slate-500" />
+                      <Icon
+                        className="mt-0.5 text-slate-500"
+                        aria-hidden="true"
+                      />
                       <div>
                         <p className="font-semibold">
                           {feature.title}

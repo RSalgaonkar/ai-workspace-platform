@@ -20,6 +20,10 @@ interface AuthState {
     accessToken: string
   ) => void;
 
+  updateUser: (
+    user: Partial<User>
+  ) => void;
+
   logout: () => void;
 }
 
@@ -50,6 +54,16 @@ export const useAuthStore =
         isAuthenticated: true
       });
     },
+
+    updateUser: (user) =>
+      set((state) => ({
+        user: state.user
+          ? {
+              ...state.user,
+              ...user
+            }
+          : state.user
+      })),
 
     logout: () => {
       localStorage.removeItem(

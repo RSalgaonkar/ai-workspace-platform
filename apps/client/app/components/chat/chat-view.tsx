@@ -128,13 +128,18 @@ export default function ChatView({
       <div
         className="flex-1 space-y-4 overflow-y-auto p-6"
         aria-live="polite"
+        aria-busy={isLoading}
       >
         {isLoading ? (
-          <div className="space-y-3">
+          <div
+            className="space-y-3"
+            aria-label="Loading messages"
+          >
             {[0, 1, 2].map((item) => (
               <div
                 key={item}
                 className="h-20 animate-pulse rounded-lg bg-slate-100"
+                aria-hidden="true"
               />
             ))}
           </div>
@@ -165,7 +170,7 @@ export default function ChatView({
                 size={16}
                 aria-hidden="true"
               />
-              Refresh page
+              Refresh messages
             </button>
           </div>
         ) : messages.length === 0 ? (

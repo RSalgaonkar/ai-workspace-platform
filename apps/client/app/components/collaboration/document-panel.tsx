@@ -59,7 +59,10 @@ export default function DocumentPanel({
   };
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4">
+    <section
+      className="rounded-lg border border-slate-200 bg-white p-4"
+      aria-labelledby="documents-title"
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <FileText
@@ -67,7 +70,10 @@ export default function DocumentPanel({
             className="text-slate-500"
             aria-hidden="true"
           />
-          <h2 className="text-sm font-semibold text-slate-950">
+          <h2
+            id="documents-title"
+            className="text-sm font-semibold text-slate-950"
+          >
             Docs
           </h2>
         </div>
@@ -77,11 +83,17 @@ export default function DocumentPanel({
           className="rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
           aria-label="Create document"
         >
-          <Plus size={15} />
+          <Plus
+            size={15}
+            aria-hidden="true"
+          />
         </button>
       </div>
 
-      <div className="mt-4 space-y-2">
+      <div
+        className="mt-4 space-y-2"
+        aria-live="polite"
+      >
         {documents.length === 0 ? (
           <p className="text-sm leading-6 text-slate-500">
             Create shared briefs, specs, and meeting notes.

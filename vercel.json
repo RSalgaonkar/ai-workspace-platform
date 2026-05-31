@@ -1,0 +1,6 @@
+{
+  "installCommand": "npm install",
+  "buildCommand": "npm run build --workspace apps/client",
+  "devCommand": "npm run dev --workspace apps/client",
+  "outputDirectory": "apps/client/.next"
+}

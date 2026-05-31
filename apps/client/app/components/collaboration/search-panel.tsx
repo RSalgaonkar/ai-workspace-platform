@@ -93,17 +93,41 @@ export default function SearchPanel() {
         }}
         placeholder="Search messages, files, docs..."
         className="mt-4 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-900"
+        aria-describedby="workspace-search-help"
       />
 
-      <div className="mt-3 flex items-center gap-2 rounded-lg bg-slate-50 px-2 py-1 text-xs font-medium text-slate-500">
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <p
+          id="workspace-search-help"
+          className="text-xs text-slate-500"
+        >
+          Search messages, documents, attachments, and indexed workspace content.
+        </p>
+        <button
+          type="button"
+          onClick={runSearch}
+          className="shrink-0 rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+        >
+          Search
+        </button>
+      </div>
+
+      <div
+        className="mt-3 flex items-center gap-2 rounded-lg bg-slate-50 px-2 py-1 text-xs font-medium text-slate-500"
+        aria-live="polite"
+      >
         <Sparkles
           size={13}
           aria-hidden="true"
         />
-        {ranking}
+        Ranking: {ranking}
       </div>
 
-      <div className="mt-4 space-y-2">
+      <div
+        className="mt-4 space-y-2"
+        aria-live="polite"
+        aria-label="Workspace search results"
+      >
         {results.length === 0 ? (
           <p className="text-sm text-slate-500">
             Search combines indexed messages, documents, attachments, and fuzzy ranking.

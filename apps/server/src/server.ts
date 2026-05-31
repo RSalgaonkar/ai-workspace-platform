@@ -3,15 +3,16 @@ import http from "http";
 import { Server } from "socket.io";
 
 import app from "./app";
+import {
+  allowedOrigins
+} from "./config/cors";
 
 const server =
   http.createServer(app);
 
 export const io = new Server(server, {
   cors: {
-    origin:
-      "http://localhost:3000",
-
+    origin: allowedOrigins,
     credentials: true
   }
 });

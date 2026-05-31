@@ -23,6 +23,8 @@ import {
 } from "@/features/workspace/store/workspace.store";
 
 export default function WorkspaceSwitcher() {
+  const menuId = "workspace-switcher-menu";
+
   const [isOpen, setIsOpen] =
     useState(false);
   const [isCreating, setIsCreating] =
@@ -132,9 +134,15 @@ export default function WorkspaceSwitcher() {
         onClick={() =>
           setIsOpen((value) => !value)
         }
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            setIsOpen(false);
+          }
+        }}
         className="group flex min-w-64 items-center gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-left shadow-sm outline-none transition hover:border-slate-300 focus-visible:ring-2 focus-visible:ring-slate-900"
         aria-haspopup="menu"
         aria-expanded={isOpen}
+        aria-controls={menuId}
       >
         <span
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white"
@@ -175,8 +183,15 @@ export default function WorkspaceSwitcher() {
 
       {isOpen && (
         <div
+          id={menuId}
           role="menu"
+          aria-label="Available workspaces"
           className="absolute left-0 top-12 z-30 w-80 rounded-lg border border-slate-200 bg-white p-2 shadow-xl"
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              setIsOpen(false);
+            }
+          }}
         >
           <div className="max-h-72 overflow-y-auto">
             {workspaces.map(
@@ -190,6 +205,12 @@ export default function WorkspaceSwitcher() {
                   }}
                   className="flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                   role="menuitem"
+                  aria-current={
+                    workspace.id ===
+                    activeWorkspace?.id
+                      ? "true"
+                      : undefined
+                  }
                 >
                   <span
                     className="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-semibold text-white"
@@ -225,6 +246,8 @@ export default function WorkspaceSwitcher() {
             }
             disabled={isCreating}
             className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 p-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50"
+            role="menuitem"
+            aria-busy={isCreating}
           >
             {isCreating ? (
               <Loader2

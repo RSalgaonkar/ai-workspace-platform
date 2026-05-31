@@ -47,19 +47,28 @@ export default function NotificationPreferencesPanel({
   };
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4">
+    <section
+      className="rounded-lg border border-slate-200 bg-white p-4"
+      aria-labelledby="notification-preferences-title"
+    >
       <div className="flex items-center gap-2">
         <Bell
           size={17}
           className="text-slate-500"
           aria-hidden="true"
         />
-        <h2 className="text-sm font-semibold text-slate-950">
+        <h2
+          id="notification-preferences-title"
+          className="text-sm font-semibold text-slate-950"
+        >
           Notifications
         </h2>
       </div>
 
-      <div className="mt-4 space-y-3">
+      <fieldset className="mt-4 space-y-3">
+        <legend className="sr-only">
+          Notification delivery channels
+        </legend>
         {[
           ["emailEnabled", "Email"],
           ["pushEnabled", "Push"],
@@ -84,21 +93,25 @@ export default function NotificationPreferencesPanel({
                   event.target.checked
                 )
               }
+              className="h-4 w-4 rounded border-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
             />
           </label>
         ))}
-      </div>
+      </fieldset>
 
       <button
         type="button"
         onClick={loadDigest}
-        className="mt-4 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+        className="mt-4 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
       >
         Preview digest
       </button>
 
       {digestCount !== null && (
-        <p className="mt-3 text-xs text-slate-500">
+        <p
+          className="mt-3 text-xs text-slate-500"
+          aria-live="polite"
+        >
           Digest includes {digestCount} recent activities.
         </p>
       )}

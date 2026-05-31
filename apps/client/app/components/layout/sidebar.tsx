@@ -2,15 +2,27 @@
 
 import Link from "next/link";
 
-import { usePathname } from "next/navigation";
+import {
+  usePathname,
+  useRouter
+} from "next/navigation";
 
 import {
   LayoutDashboard,
+  LogOut,
   MessageSquare,
   Settings,
   Sparkles,
   Users
 } from "lucide-react";
+
+import {
+  logoutUser
+} from "@/features/auth/api/auth.api";
+
+import {
+  useAuthStore
+} from "@/types/auth.store";
 
 const navItems = [
   {
@@ -40,6 +52,21 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const logout = useAuthStore(
+    (state) => state.logout
+  );
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch {
+      // Local logout still completes if the API is unavailable.
+    } finally {
+      logout();
+      router.replace("/");
+    }
+  };
 
   return (
     <aside
@@ -95,13 +122,27 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto rounded-lg border border-slate-200 bg-slate-50 p-4">
-        <p className="text-sm font-semibold text-slate-950">
-          Production mode
-        </p>
-        <p className="mt-1 text-xs leading-5 text-slate-500">
-          Workspace, chat, and access flows are ready for team workflows.
-        </p>
+      <div className="mt-auto space-y-3">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+        >
+          <LogOut
+            size={17}
+            aria-hidden="true"
+          />
+          Logout
+        </button>
+
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <p className="text-sm font-semibold text-slate-950">
+            Production mode
+          </p>
+          <p className="mt-1 text-xs leading-5 text-slate-500">
+            Workspace, chat, and access flows are ready for team workflows.
+          </p>
+        </div>
       </div>
     </aside>
   );

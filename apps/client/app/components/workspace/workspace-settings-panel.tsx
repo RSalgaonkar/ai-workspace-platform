@@ -174,6 +174,7 @@ export default function WorkspaceSettingsPanel() {
             <label className="text-sm font-medium text-slate-700">
               Workspace name
               <input
+                id="workspace-settings-name"
                 value={name}
                 onChange={(event) =>
                   setName(
@@ -187,6 +188,7 @@ export default function WorkspaceSettingsPanel() {
             <label className="text-sm font-medium text-slate-700">
               Description
               <textarea
+                id="workspace-settings-description"
                 value={description}
                 onChange={(event) =>
                   setDescription(
@@ -197,10 +199,10 @@ export default function WorkspaceSettingsPanel() {
               />
             </label>
 
-            <div>
-              <p className="text-sm font-medium text-slate-700">
+            <fieldset>
+              <legend className="text-sm font-medium text-slate-700">
                 Avatar color
-              </p>
+              </legend>
               <div className="mt-2 flex flex-wrap gap-2">
                 {colors.map((color) => (
                   <button
@@ -218,10 +220,13 @@ export default function WorkspaceSettingsPanel() {
                       backgroundColor: color
                     }}
                     aria-label={`Use ${color} avatar color`}
+                    aria-pressed={
+                      avatarColor === color
+                    }
                   />
                 ))}
               </div>
-            </div>
+            </fieldset>
 
             <button
               type="button"
@@ -260,7 +265,14 @@ export default function WorkspaceSettingsPanel() {
                   </p>
                 </div>
 
+                <label
+                  className="sr-only"
+                  htmlFor={`member-role-${member.id}`}
+                >
+                  Role for {member.user.name}
+                </label>
                 <select
+                  id={`member-role-${member.id}`}
                   value={member.role}
                   onChange={(event) =>
                     updateMemberRole(
@@ -272,7 +284,7 @@ export default function WorkspaceSettingsPanel() {
                         | "MEMBER"
                     )
                   }
-                  className="rounded-lg border border-slate-300 px-2 py-1 text-sm"
+                  className="rounded-lg border border-slate-300 px-2 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
                   <option value="OWNER">
                     Owner
@@ -303,7 +315,15 @@ export default function WorkspaceSettingsPanel() {
           </div>
 
           <div className="mt-4 flex gap-2">
+            <label
+              htmlFor="workspace-invite-email"
+              className="sr-only"
+            >
+              Teammate email address
+            </label>
             <input
+              id="workspace-invite-email"
+              type="email"
               value={inviteEmail}
               onChange={(event) =>
                 setInviteEmail(
@@ -316,7 +336,7 @@ export default function WorkspaceSettingsPanel() {
             <button
               type="button"
               onClick={sendInvite}
-              className="rounded-lg bg-slate-950 px-3 py-2 text-sm font-medium text-white"
+              className="rounded-lg bg-slate-950 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
             >
               Invite
             </button>
@@ -337,7 +357,7 @@ export default function WorkspaceSettingsPanel() {
                     {invite.email}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {invite.status} · {invite.role}
+                    {invite.status} - {invite.role}
                   </p>
                 </div>
               ))
@@ -356,7 +376,7 @@ export default function WorkspaceSettingsPanel() {
             </h2>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-3">
+          <dl className="mt-4 grid grid-cols-2 gap-3">
             {Object.entries(
               analytics ?? {}
             ).map(([key, value]) => (
@@ -364,18 +384,18 @@ export default function WorkspaceSettingsPanel() {
                 key={key}
                 className="rounded-lg bg-slate-50 p-3"
               >
-                <p className="text-xl font-bold text-slate-950">
+                <dt className="text-xl font-bold text-slate-950">
                   {value}
-                </p>
-                <p className="text-xs capitalize text-slate-500">
+                </dt>
+                <dd className="text-xs capitalize text-slate-500">
                   {key.replace(
                     /([A-Z])/g,
                     " $1"
                   )}
-                </p>
+                </dd>
               </div>
             ))}
-          </div>
+          </dl>
         </Card>
       </div>
     </div>

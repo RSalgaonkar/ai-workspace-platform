@@ -238,6 +238,7 @@ export default function MessageComposer({
           }
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-slate-950 text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:pointer-events-none disabled:opacity-50"
           aria-label="Send message"
+          aria-busy={isSending}
         >
           <Send
             size={18}

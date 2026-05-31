@@ -79,7 +79,7 @@ export default function ActivityFeed({
               <p className="mt-1 text-xs text-slate-500">
                 {item.actor?.name ??
                   "System"}{" "}
-                ·{" "}
+                -{" "}
                 {new Date(
                   item.createdAt
                 ).toLocaleTimeString([], {
